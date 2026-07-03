@@ -1,7 +1,11 @@
 import { generateId } from "../utils/generateId.js";
 import { generateTableNumber } from "../utils/generateTableNumber.js";
+
+const status = ["PENDING", "CONFIRMED", "REJECTED"]
+const randomIndex = Math.floor(Math.random() * status.length)
+
 export default class Reservation{
-    constructor({fullName, phoneNumber, date, time, numberOfGuest, status
+    constructor({fullName, phoneNumber, date, time, numberOfGuest
     }){
         this.reservationId = generateId();
         this.fullName = fullName;
@@ -10,7 +14,7 @@ export default class Reservation{
         this.time = time;
         this.numberOfGuest = numberOfGuest;
         this.tableNumber = generateTableNumber(); // randomly assign a table number between 1 and 10
-        this.status = status ?? "pending";
+        this.status = status[randomIndex]; // randomly assign a status from the status array
         this.createdAt = new Date().toISOString();
         this.updatedAt = new Date().toDateString();
     }
@@ -25,4 +29,6 @@ export default class Reservation{
 //     status: "pending"
 // });
 
+// console.log(typeof sampleReservation === 'object' && sampleReservation !== null && !Array.isArray(sampleReservation));
+// console.log(Array.isArray({})) 
 // console.log(sampleReservation);

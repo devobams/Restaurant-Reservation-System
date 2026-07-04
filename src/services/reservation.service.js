@@ -30,13 +30,25 @@ export function getReservationById(id) {}
 
 export function updateReservation(id, data) {}
 
-export function deleteReservation(id) {
-  const reservations = JSON.parse(fs.readFileSync(DATA_PATH, 'utf-8'));
-  const index = reservations.findIndex(reservation => reservation.id === id);
-  if (index === -1) {
-    throw new Error('Reservation not found');
+export async function deleteReservation(id) {
+  let reservations = [];
+  try {
+    const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
+    reservations = JSON.parse(fileContent);
+  } catch {
+    const error = new Error('Reservation not found');
+    error.statusCode = 404;
+    throw error;
   }
+
+  const index = reservations.findIndex(reservation => reservation.reservationId === id);
+  if (index === -1) {
+    const error = new Error('Reservation not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
   reservations.splice(index, 1);
-  fs.writeFileSync(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
+  await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
   return { message: 'Reservation deleted successfully' };
 }

@@ -28,7 +28,35 @@ export async function createReservation(data) {
 
 export function getReservations() {}
 
-export function getReservationById(id) {}
+export async function getReservationById(id) {
+  let reservations = [];
+  // 1. Try Read the reservations.json file and parse it into an array of reservations
+  try {
+    // Read file database
+    const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
+    // If the file has text, parse it. If it's empty, use an empty array.
+    reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
+  } catch (err) {
+    // if file is empty or doesn't exist, this is an empty database case
+    if (err.code === 'ENOENT') {
+      const error = new Error('Reservation not found');
+      error.statusCode = 404;
+      throw error;
+    } else {
+      // if there is another error, throw it
+      throw err;
+    }
+  }
+  // 2. Find the reservation with the given id in the array
+  const reservation = reservations.find(reservation => reservation.reservationId === id);
+  if (!reservation) {
+    const error = new Error('Reservation not found');
+    error.statusCode = 404;
+    throw error;
+  }
+  // 3. If found, return the reservation object;
+  return reservation;
+}
 
 export async function updateReservation(id, data) {
   // steps to update a reservation:

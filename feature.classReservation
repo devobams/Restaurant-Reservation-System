@@ -8,9 +8,8 @@ class Reservation{
         this.time = time;
         this.numberOfGuest = numberOfGuest;
         this.tableNumber = tableNumber;
-        this.status = status ?? "pending";
-        this.createdAt = new Date().toISOString;
-        this.updatedAt = new Date().toISOString;
+        this.status = "pending";
+        this.createdAt = new Date();
     }
 }
 module.exports = Reservation

@@ -18,11 +18,24 @@ export function validateReservation(data) {
     return { valid: false, message: "fullName must be a string" }
   }
 
+  // validate phoneNumber to be a valid Nigerian phone number
   const phoneRegex = /^(?:\+234|0)\d{10}$/;
   if (!phoneRegex.test(data.phoneNumber)) {
     return { valid: false, message: "phoneNumber must be a valid Nigerian phone number" }
   }
 
+  // validate numberOfGuest to be a number between 1 and 10
+  if (typeof data.numberOfGuest !== 'number' || data.numberOfGuest < 1 || data.numberOfGuest > 10) {
+    return { valid: false, message: "numberOfGuest must be a number between 1 and 10" }
+  }
+
+  // validate time format (HH:MM) e.g. 14:30, 09:15, 23:59
+  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  if (!timeRegex.test(data.time)) {
+    return { valid: false, message: "time must be a valid time in the format HH:MM" }
+  }
+
+  // validate date format (YYYY-MM-DD) and check if it's a valid date
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(data.date) || isNaN(new Date(data.date).getTime())) {
     return { valid: false, message: "date must be a valid date in the format YYYY-MM-DD" }

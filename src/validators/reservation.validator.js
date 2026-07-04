@@ -40,6 +40,9 @@ export function validateReservation(data) {
   if (!dateRegex.test(data.date) || isNaN(new Date(data.date).getTime())) {
     return { valid: false, message: "date must be a valid date in the format YYYY-MM-DD" }
   }
+
+  // return this if all validation checks pass
+  return { valid: true, message: "Validation successful" };
 }
 
 /**
@@ -70,3 +73,18 @@ export function validateReservation(data) {
 // if (validateReservation(payload).valid === false) {
 //   return res.status(400).json({ error: validateReservation(payload).message });
 // }
+
+// for testing import reservationclass
+// import Reservation from "../models/reservation.model.js";
+
+// const sampleReservation = new Reservation({
+//     fullName: "John Doe",
+//     phoneNumber: "08157511710",
+//     date: "2023-07-15",
+//     time: "19:00",
+//     numberOfGuest: 4,
+//     status: "pending"
+// });
+
+// const result = validateReservation(sampleReservation)
+// console.log(result);

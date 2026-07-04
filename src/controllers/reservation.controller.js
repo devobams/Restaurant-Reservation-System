@@ -1,9 +1,16 @@
+import { validateReservation } from '../validators/reservation.validator.js';
 import reservationService from '../services/reservation.service.js';
 
 export async function createReservation(req, res) {
   try {
-    const data = req.body;
-    const result = await reservationService.createReservation(data);
+    const payload = req.body;
+
+    const validation = validateReservation(payload);
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.message });
+    }
+
+    const result = await reservationService.createReservation(payload);
     res.status(201).json(result);
   } catch (error) {
     const statusCode = error.statusCode || 500;

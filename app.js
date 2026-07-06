@@ -1,11 +1,16 @@
 import reservationRoutes from "./src/routes/reservation.routes.js";
 import express from "express";
+import morgan from "morgan";
+
 import errorHandler from "./src/middleware/error.middleware.js";
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+
+// Logging Every Request using morgan
+app.use(morgan("dev"));
 
 // Health Check Route
 app.get("/", (req, res) => {

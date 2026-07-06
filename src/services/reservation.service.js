@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const DATA_PATH = join(__dirname, '..', 'data', 'reservations.json');
 
-export async function createReservation(data) {
+async function createReservation(data) {
   // Instantiate the Reservation model; auto-generates reservationId, tableNumber, status, timestamps
   const reservation = new Reservation(data);
 
@@ -30,9 +30,9 @@ export async function createReservation(data) {
   return reservation;
 }
 
-export async function getReservations() {}
+async function getReservations() {}
 
-export async function getReservationById(id) {
+async function getReservationById(id) {
   let reservations = [];
   // 1. Try Read the reservations.json file and parse it into an array of reservations
   try {
@@ -55,7 +55,7 @@ export async function getReservationById(id) {
   return reservation;
 }
 
-export async function updateReservation(id, data) {
+async function updateReservation(id, data) {
   // steps to update a reservation:
   // 1. Validate incoming data first before updating the reservation
   const validate = validateReservation(data);
@@ -91,7 +91,7 @@ export async function updateReservation(id, data) {
   return reservations[index]
 }
 
-export async function deleteReservation(id) {
+async function deleteReservation(id) {
   // Read existing reservations from the JSON file
   let reservations = [];
   try {

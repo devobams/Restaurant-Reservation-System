@@ -1,22 +1,17 @@
 import { validateReservation } from '../validators/reservation.validator.js';
 import reservationService from '../services/reservation.service.js';
+import { AppError } from '../middleware/error.middleware.js';
 
-export async function createReservation(req, res) {
-  try {
+ export async function createReservation(req, res) {
     const payload = req.body;
 
     const validation = validateReservation(payload);
     if (!validation.valid) {
-      return res.status(400).json({ error: validation.message });
+      throw new AppError(validation.message, 400);
     }
 
     const result = await reservationService.createReservation(payload);
     res.status(201).json(result);
-  } catch (error) {
-    const statusCode = error.statusCode || 500;
-    const message = error.message || 'Internal server error';
-    res.status(statusCode).json({ error: message });
-  }
 }
 
 export async function getReservations(req, res) {

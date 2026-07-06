@@ -16,7 +16,7 @@
     "time": "19:00",
     "numberOfGuest": 3,
     "tableNumber": 10,
-    "status": "REJECTED",
+    "status": "CONFIRMED",
     "createdAt": "2026-07-06T14:53:39.269Z",
     "updatedAt": "Mon Jul 06 2026"
   },

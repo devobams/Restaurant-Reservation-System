@@ -108,12 +108,14 @@ async function deleteReservation(id) {
     throw new AppError('Reservation not found', 404);
   }
 
-  // Remove the reservation from the array and persist to disk
-  reservations.splice(index, 1);
+  // do a soft delete by setting the status to "Cancelled"
+  reservations[index].status = "Cancelled";
+
+  // Persist the updated reservations array back to the JSON file
   await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
 
   // Return a success confirmation
-  return { message: 'Reservation deleted successfully' };
+  return { message: 'Reservation Canceled successfully' };
 }
 
 

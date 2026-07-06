@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const DATA_PATH = join(__dirname, '..', 'data', 'reservations.json');
 
-export async function createReservation(data) {
+async function createReservation(data) {
   // Instantiate the Reservation model; auto-generates reservationId, tableNumber, status, timestamps
   const reservation = new Reservation(data);
   
@@ -30,8 +30,7 @@ export async function createReservation(data) {
   return reservation;
 }
 
-
-export async function getReservationById(id) {
+async function getReservationById(id) {
   let reservations = [];
   // 1. Try Read the reservations.json file and parse it into an array of reservations
   try {
@@ -54,7 +53,7 @@ export async function getReservationById(id) {
   return reservation;
 }
 
-export async function getReservations() {
+async function getReservations() {
   try {
     const fileContent = await fs.readFile(DATA_PATH, "utf-8");
     const reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
@@ -67,24 +66,9 @@ export async function getReservations() {
   }
 }
 
-export async function getReservations() {
-  try {
-    const fileContent = await fs.readFile(DATA_PATH, "utf-8");
-    const reservations = JSON.parse(fileContent);
-    return reservations;
-  } catch(err){
-    if(err.code==="ENOENT"){
-        throw new AppError("Reservations file not found",404);
-    }
-    throw err;
-}
-}
-
-export function getReservationById(id) {}
-
 export function updateReservation(id, data) {}
 
-export async function deleteReservation(id) {
+async function deleteReservation(id) {
   // Read existing reservations from the JSON file
   let reservations = [];
   try {
@@ -101,12 +85,14 @@ export async function deleteReservation(id) {
     throw new AppError('Reservation not found', 404);
   }
 
-  // Remove the reservation from the array and persist to disk
-  reservations.splice(index, 1);
+  // do a soft delete by setting the status to "Cancelled"
+  reservations[index].status = "CANCELLED";
+
+  // Persist the updated reservations array back to the JSON file
   await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
 
   // Return a success confirmation
-  return { message: 'Reservation deleted successfully' };
+  return { message: 'Reservation Canceled successfully' };
 }
 
 

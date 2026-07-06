@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error.middleware.js';
     }
 
     const result = await reservationService.createReservation(payload);
-    res.status(201).json(result);
+    res.status(200).json(result);
 }
 
 export async function getReservations(req, res) {

@@ -1,5 +1,6 @@
 import reservationRoutes from "./src/routes/reservation.routes.js";
 import express from "express";
+import errorHandler from "./src/middleware/error.middleware.js";
 
 const app = express();
 
@@ -18,11 +19,13 @@ app.get("/", (req, res) => {
 app.use("/api/reservations", reservationRoutes);
 
 // Handle Unknown Routes
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-    });
-    message: "Route not found"
+app.use((req, res, next) => {
+    const error = new Error('Route not found');
+    error.statusCode = 404;
+    next(error);
 });
+
+// Error handling middleware
+app.use(errorHandler);
 
 export default app;

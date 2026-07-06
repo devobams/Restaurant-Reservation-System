@@ -15,14 +15,8 @@ import { AppError } from '../middleware/error.middleware.js';
 }
 
 export async function getReservations(req, res) {
-  try {
-    const reservations = await reservationService.getReservations();
-    res.status(200).json(reservations);
-  } catch (error) {
-    res.status(error.statusCode || 500).json({
-      error: error.message,
-    });
-  }
+  const reservations = await reservationService.getReservations();
+  res.status(200).json(reservations);
 }
 
 export function getReservationById(req, res) {}

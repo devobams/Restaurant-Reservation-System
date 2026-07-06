@@ -12,7 +12,7 @@ const DATA_PATH = join(__dirname, '..', 'data', 'reservations.json');
 export async function createReservation(data) {
   // Instantiate the Reservation model; auto-generates reservationId, tableNumber, status, timestamps
   const reservation = new Reservation(data);
-
+  
   // Read existing reservations from the JSON file
   let reservations = [];
   try {
@@ -21,16 +21,15 @@ export async function createReservation(data) {
   } catch {
     // File doesn't exist or is empty, start fresh with an empty array
   }
-
+  
   // Append the new reservation and persist to disk
   reservations.push(reservation);
   await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
-
+  
   // Return the fully populated reservation object
   return reservation;
 }
 
-export async function getReservations() {}
 
 export async function getReservationById(id) {
   let reservations = [];
@@ -40,22 +39,46 @@ export async function getReservationById(id) {
     const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
     // If the file has text, parse it. If it's empty, use an empty array.
     reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        throw new AppError('Reservation not found', 404);
-      }
-      throw err;
-    }
-    // 2. Find the reservation with the given id in the array
-    const reservation = reservations.find(reservation => reservation.reservationId === id);
-    if (!reservation) {
+  } catch (err) {
+    if (err.code === 'ENOENT') {
       throw new AppError('Reservation not found', 404);
     }
+    throw err;
+  }
+  // 2. Find the reservation with the given id in the array
+  const reservation = reservations.find(reservation => reservation.reservationId === id);
+  if (!reservation) {
+    throw new AppError('Reservation not found', 404);
+  }
   // 3. If found, return the reservation object;
   return reservation;
 }
 
-export function getReservations() {}
+export async function getReservations() {
+  try {
+    const fileContent = await fs.readFile(DATA_PATH, "utf-8");
+    const reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
+    return reservations;
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      throw new AppError("Reservations not found", 404);
+    }
+    throw err;
+  }
+}
+
+export async function getReservations() {
+  try {
+    const fileContent = await fs.readFile(DATA_PATH, "utf-8");
+    const reservations = JSON.parse(fileContent);
+    return reservations;
+  } catch(err){
+    if(err.code==="ENOENT"){
+        throw new AppError("Reservations file not found",404);
+    }
+    throw err;
+}
+}
 
 export function getReservationById(id) {}
 

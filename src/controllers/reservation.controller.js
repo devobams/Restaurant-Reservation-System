@@ -1,7 +1,7 @@
 import { validateReservation } from '../validators/reservation.validator.js';
 import reservationService from '../services/reservation.service.js';
 
-export async function createReservation(req, res) {
+ export async function createReservation(req, res) {
   try {
     const payload = req.body;
 

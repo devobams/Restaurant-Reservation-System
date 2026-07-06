@@ -1,4 +1,4 @@
-
+import reservationRoutes from "./src/routes/reservation.routes.js";
 import express from "express";
 
 const app = express();
@@ -15,14 +15,14 @@ app.get("/", (req, res) => {
 });
 
 // Register Routes Here
-// app.use("/api/reservations", reservationRoutes);
+app.use("/api/reservations", reservationRoutes);
 
 // Handle Unknown Routes
 app.use((req, res) => {
     res.status(404).json({
         success: false,
-        message: "Route not found"
     });
+    message: "Route not found"
 });
 
 export default app;

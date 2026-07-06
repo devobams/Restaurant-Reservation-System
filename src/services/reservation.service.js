@@ -126,6 +126,17 @@ export async function deleteReservation(id) {
   return { message: 'Reservation deleted successfully' };
 }
 
+
+
+
+export default {
+  createReservation,
+  getReservations,
+  getReservationById,
+  updateReservation,
+  deleteReservation,
+};
+
 // // testing update reservation by ID
 // const newData = {
 //   reservationId: "res-123",
@@ -139,3 +150,4 @@ export async function deleteReservation(id) {
 
 // const updatedResult = await updateReservation("res-123", newData)
 // console.log(updatedResult);
+

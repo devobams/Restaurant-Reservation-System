@@ -66,7 +66,50 @@ async function getReservations() {
   }
 }
 
-export function updateReservation(id, data) {}
+async function updateReservation(id, data) {
+  // steps to update a reservation:
+  // 1. Validate incoming data first before updating the reservation
+  const validate = validateReservation(data);
+  if (!validate.valid) {
+    const error = new Error(validate.message);
+    error.statusCode = 400;
+    throw error;
+  }
+  // 2. Try Read the reservations.json file to see if there are files in it and parse it into an array of reservations
+  let reservations = [];
+  try {
+    // try to read the reservations.json file
+    const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
+
+    // parse the file content into an array of reservations
+    reservations = JSON.parse(fileContent);
+  } catch (err) {
+    // if file is empty or doesn't exist, this is an empty database case
+    if (err.code === 'ENOENT') {
+      const error = new Error('Reservation not found');
+      error.statusCode = 404;
+      throw error;
+    } else {
+      // if there is another error, throw it
+      throw err;
+    }
+  }
+  // 3. Find the index of the reservation with the given id in the array
+  const index = reservations.findIndex(reservation => reservation.reservationId === id);
+  if (index === -1) {
+    const error = new Error('Reservation not found');
+    error.statusCode = 404;
+    throw error;
+  }
+  // 4. Update the properties (merging existing data with incoming updates)
+  reservations[index] = { ...reservations[index], ...data, reservationId: id };
+
+  // 5. Write the entire updated array back to reservations.json
+  await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf8');
+
+  // 6. Return the updated reservation object
+  return reservations[index]
+}
 
 async function deleteReservation(id) {
   // Read existing reservations from the JSON file

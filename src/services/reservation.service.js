@@ -24,7 +24,7 @@ export async function createReservation(data) {
   return reservation;
 }
 
-export function getReservations() {
+export async function getReservations() {
   try {
     const fileContent = await fs.readFile(DATA_PATH, "utf-8");
     const reservations = JSON.parse(fileContent);

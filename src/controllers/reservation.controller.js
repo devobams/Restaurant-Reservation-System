@@ -19,7 +19,16 @@ export async function createReservation(req, res) {
   }
 }
 
-export function getReservations(req, res) {}
+export async function getReservations(req, res) {
+  try {
+    const reservations = await reservationService.getReservations();
+    res.status(200).json(reservations);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      error: error.message,
+    });
+  }
+}
 
 export function getReservationById(req, res) {}
 

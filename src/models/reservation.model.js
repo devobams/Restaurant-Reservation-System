@@ -1,5 +1,5 @@
 import { generateId } from "../utils/generateId.js";
-import { generateTableNumber } from "../utils/generateTableNumber.js";
+import { generateTableNumber } from "../utils/generateAvailableTable.js";
 
 const status = ["PENDING", "CONFIRMED", "REJECTED"]
 const randomIndex = Math.floor(Math.random() * status.length)

@@ -16,7 +16,7 @@
     "time": "19:00",
     "numberOfGuest": 3,
     "tableNumber": 10,
-    "status": "CONFIRMED",
+    "status": "PENDING",
     "createdAt": "2026-07-06T14:53:39.269Z",
     "updatedAt": "Mon Jul 06 2026"
   },
@@ -54,6 +54,30 @@
     "tableNumber": 8,
     "status": "CONFIRMED",
     "createdAt": "2026-07-06T15:13:58.094Z",
+    "updatedAt": "Mon Jul 06 2026"
+  },
+  {
+    "reservationId": "5f5c8671-eae1-4e20-9978-f525326c4c61",
+    "fullName": "Mark Smith",
+    "phoneNumber": "08123456789",
+    "date": "2024-07-19",
+    "time": "17:00",
+    "numberOfGuest": 2,
+    "tableNumber": 7,
+    "status": "CONFIRMED",
+    "createdAt": "2026-07-06T22:50:53.511Z",
+    "updatedAt": "Mon Jul 06 2026"
+  },
+  {
+    "reservationId": "ad1a223a-62e0-4eb7-9071-c728e077f963",
+    "fullName": "John Doe2",
+    "phoneNumber": "08123456789",
+    "date": "2024-07-19",
+    "time": "17:00",
+    "numberOfGuest": 2,
+    "tableNumber": 2,
+    "status": "CONFIRMED",
+    "createdAt": "2026-07-06T22:51:57.288Z",
     "updatedAt": "Mon Jul 06 2026"
   }
 ]

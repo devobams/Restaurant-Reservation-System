@@ -54,6 +54,7 @@ async function createReservation(data) {
   const reservation = new Reservation(data);
   reservation.tableNumber = tableNumber;
   reservation.status = 'CONFIRMED';
+  reservation.updatedAt = new Date().toISOString();
 
   // 7. Append and persist to disk
   reservations.push(reservation);

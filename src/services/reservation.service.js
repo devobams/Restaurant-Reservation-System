@@ -4,39 +4,72 @@ import { dirname, join } from 'path';
 import Reservation from '../models/reservation.model.js';
 import { validateReservation } from '../validators/reservation.validator.js';
 import { AppError } from '../middleware/error.middleware.js';
+import { generateAvailableTable } from '../utils/generateAvailableTable.js';
+import { suggestNextSlot } from '../utils/suggestNextSlot.js';
+import { TOTAL_TABLES } from '../config/app.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const DATA_PATH = join(__dirname, '..', 'data', 'reservations.json');
 
 async function createReservation(data) {
-  // Instantiate the Reservation model; auto-generates reservationId, tableNumber, status, timestamps
-  const reservation = new Reservation(data);
-  
-  // Read existing reservations from the JSON file
+  // 1. Validate the incoming payload
+  const validation = validateReservation(data);
+  if (!validation.valid) {
+    throw new AppError(validation.message, 400);
+  }
+
+  // 2. Read existing reservations from the data store
   let reservations = [];
   try {
     const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
     reservations = JSON.parse(fileContent);
   } catch {
-    // File doesn't exist or is empty, start fresh with an empty array
+    // File doesn't exist or is empty — start fresh
   }
-  
-  // Append the new reservation and persist to disk
+
+  // 3. Prevent duplicate CONFIRMED reservations (same customer, same date and time)
+  const duplicate = reservations.find(
+    r => r.phoneNumber === data.phoneNumber && r.date === data.date && r.time === data.time && r.status === "CONFIRMED"
+  );
+  if (duplicate) {
+    throw new AppError('You already have a CONFIRMED reservation at this date and time', 429);
+  }
+
+  // 4. Collect CONFIRMED table numbers for this time slot
+  const reservedTableNumbers = reservations
+    .filter(r => r.date === data.date && r.time === data.time && r.status === "CONFIRMED")
+    .map(r => r.tableNumber);
+
+  // 5. Instant decision — find an available table or reject
+  const tableNumber = generateAvailableTable(reservedTableNumbers);
+  if (!tableNumber) {
+    const nextSlot = suggestNextSlot(data.date, data.time, reservations);
+    const message = nextSlot
+      ? `No tables available at ${data.date} ${data.time}. Next available: ${nextSlot.date} at ${nextSlot.time}`
+      : `No tables available at ${data.date} ${data.time}`;
+    throw new AppError(message, 409);
+  }
+
+  // 6. Create the reservation (CONFIRMED instantly, system assigns table)
+  const reservation = new Reservation(data);
+  reservation.tableNumber = tableNumber;
+  reservation.status = 'CONFIRMED';
+  reservation.updatedAt = new Date().toISOString();
+
+  // 7. Append and persist to disk
   reservations.push(reservation);
   await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
-  
-  // Return the fully populated reservation object
+
+  // 8. Return the fully populated reservation
   return reservation;
 }
 
 async function getReservationById(id) {
+  // 1. Read existing reservations from the data store
   let reservations = [];
-  // 1. Try Read the reservations.json file and parse it into an array of reservations
   try {
-    // Read file database
     const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
-    // If the file has text, parse it. If it's empty, use an empty array.
     reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
   } catch (err) {
     if (err.code === 'ENOENT') {
@@ -44,75 +77,68 @@ async function getReservationById(id) {
     }
     throw err;
   }
-  // 2. Find the reservation with the given id in the array
-  const reservation = reservations.find(reservation => reservation.reservationId === id);
+
+  // 2. Find the reservation by ID
+  const reservation = reservations.find(r => r.reservationId === id);
   if (!reservation) {
     throw new AppError('Reservation not found', 404);
   }
-  // 3. If found, return the reservation object;
+
+  // 3. Return the found reservation
   return reservation;
 }
 
 async function getReservations() {
+  // 1. Read all reservations from the data store
+  let reservations = [];
   try {
-    const fileContent = await fs.readFile(DATA_PATH, "utf-8");
-    const reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
-    return reservations;
-  } catch (err) {
-    if (err.code === "ENOENT") {
-      throw new AppError("Reservations not found", 404);
-    }
-    throw err;
+    const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
+    reservations = fileContent.trim() ? JSON.parse(fileContent) : [];
+  } catch {
+    // File doesn't exist or is empty — return an empty array
   }
+
+  // 2. Return the list (may be empty)
+  return reservations;
 }
 
 async function updateReservation(id, data) {
-  // steps to update a reservation:
-  // 1. Validate incoming data first before updating the reservation
+  // 1. Validate the incoming payload
   const validate = validateReservation(data);
   if (!validate.valid) {
-    const error = new Error(validate.message);
-    error.statusCode = 400;
-    throw error;
+    throw new AppError(validate.message, 400);
   }
-  // 2. Try Read the reservations.json file to see if there are files in it and parse it into an array of reservations
+
+  // 2. Read existing reservations from the data store
   let reservations = [];
   try {
-    // try to read the reservations.json file
     const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
-
-    // parse the file content into an array of reservations
     reservations = JSON.parse(fileContent);
   } catch (err) {
-    // if file is empty or doesn't exist, this is an empty database case
     if (err.code === 'ENOENT') {
-      const error = new Error('Reservation not found');
-      error.statusCode = 404;
-      throw error;
-    } else {
-      // if there is another error, throw it
-      throw err;
+      throw new AppError('Reservation not found', 404);
     }
+    throw err;
   }
-  // 3. Find the index of the reservation with the given id in the array
+
+  // 3. Find the reservation by ID
   const index = reservations.findIndex(reservation => reservation.reservationId === id);
   if (index === -1) {
-    const error = new Error('Reservation not found');
-    error.statusCode = 404;
-    throw error;
+    throw new AppError('Reservation not found', 404);
   }
-  // 4. Update the properties (merging existing data with incoming updates)
-  reservations[index] = { ...reservations[index], ...data, reservationId: id };
 
-  // 5. Write the entire updated array back to reservations.json
-  await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf8');
+  // 4. Merge existing data with updates and refresh the timestamp
+  reservations[index] = { ...reservations[index], ...data, reservationId: id, updatedAt: new Date().toISOString() };
 
-  // 6. Return the updated reservation object
-  return reservations[index]
+  // 5. Persist the updated array to disk
+  await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
+
+  // 6. Return the updated reservation
+  return reservations[index];
 }
 
 async function deleteReservation(id) {
-  // Read existing reservations from the JSON file
+  // 1. Read existing reservations from the data store
   let reservations = [];
   try {
     const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
@@ -122,23 +148,22 @@ async function deleteReservation(id) {
     throw new AppError('Reservation not found', 404);
   }
 
-  // Locate the reservation by its ID
+  // 2. Find the reservation by ID
   const index = reservations.findIndex(reservation => reservation.reservationId === id);
   if (index === -1) {
     throw new AppError('Reservation not found', 404);
   }
 
-  // do a soft delete by setting the status to "Cancelled"
+  // 3. Soft delete — mark as CANCELLED and refresh the timestamp
   reservations[index].status = "CANCELLED";
+  reservations[index].updatedAt = new Date().toISOString();
 
-  // Persist the updated reservations array back to the JSON file
+  // 4. Persist the updated array to disk
   await fs.writeFile(DATA_PATH, JSON.stringify(reservations, null, 2), 'utf-8');
 
-  // Return a success confirmation
+  // 5. Return a success confirmation
   return { message: 'Reservation Canceled successfully' };
 }
-
-
 
 
 export default {

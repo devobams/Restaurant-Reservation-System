@@ -244,10 +244,11 @@ TechCrush C7 Group 10:
 - [@osiebejudith2022-eng](https://github.com/osiebejudith2022-eng)
 - [@ojekab4u](https://github.com/ojekab4u)
 - [@okuo-john](https://github.com/okuo-john)
-- [@JohnPro300](https://github.com/JohnPro300)
-- [@kamolilukeman-hash](https://github.com/kamolilukeman-hash)
-- [@davekoya14-star](https://github.com/davekoya14-star)
 - [@mariamafolabi50-lab](https://github.com/mariamafolabi50-lab)
+- [@JohnPro300](https://github.com/JohnPro300)
+- [@davekoya14-star](https://github.com/davekoya14-star)
+- [@GloryUsen](https://github.com/GloryUsen)
+- [@kamolilukeman-hash](https://github.com/kamolilukeman-hash)
 
 For a detailed breakdown of individual contributions, see the repository's [Contributors graph](https://github.com/devobams/Restaurant-Reservation-System/graphs/contributors?from=4%2F4%2F2026).
 

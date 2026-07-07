@@ -7,5 +7,53 @@
     "time": "20:00",
     "numberOfGuest": 5,
     "status": "Cancelled"
+  },
+  {
+    "reservationId": "cce07048-a2fb-40be-8038-feeb761772fa",
+    "fullName": "Michael Bams",
+    "phoneNumber": "08126741710",
+    "date": "2026-06-07",
+    "time": "19:00",
+    "numberOfGuest": 3,
+    "tableNumber": 10,
+    "status": "REJECTED",
+    "createdAt": "2026-07-06T14:53:39.269Z",
+    "updatedAt": "Mon Jul 06 2026"
+  },
+  {
+    "reservationId": "46c446aa-b468-4b7d-b785-21647f1faf8f",
+    "fullName": "Dr Bams",
+    "phoneNumber": "08120741870",
+    "date": "2026-07-06",
+    "time": "18:00",
+    "numberOfGuest": 5,
+    "tableNumber": 9,
+    "status": "PENDING",
+    "createdAt": "2026-07-06T15:05:55.077Z",
+    "updatedAt": "Mon Jul 06 2026"
+  },
+  {
+    "reservationId": "1135bef7-d4d2-46d3-854d-244a40fac722",
+    "fullName": "Mr Joseph",
+    "phoneNumber": "08132541980",
+    "date": "2026-07-10",
+    "time": "15:00",
+    "numberOfGuest": 4,
+    "tableNumber": 7,
+    "status": "PENDING",
+    "createdAt": "2026-07-06T15:11:19.272Z",
+    "updatedAt": "Mon Jul 06 2026"
+  },
+  {
+    "reservationId": "2092274a-0646-4762-99c7-9b8f7354d49c",
+    "fullName": "Clayton Rash",
+    "phoneNumber": "08132541765",
+    "date": "2026-07-11",
+    "time": "14:00",
+    "numberOfGuest": 2,
+    "tableNumber": 8,
+    "status": "CONFIRMED",
+    "createdAt": "2026-07-06T15:13:58.094Z",
+    "updatedAt": "Mon Jul 06 2026"
   }
 ]

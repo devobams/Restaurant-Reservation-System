@@ -6,7 +6,8 @@ import { validateReservation } from '../validators/reservation.validator.js';
 import { AppError } from '../middleware/error.middleware.js';
 import { generateAvailableTable } from '../utils/generateAvailableTable.js';
 import { suggestNextSlot } from '../utils/suggestNextSlot.js';
-import { TOTAL_TABLES } from '../config/app.config.js';
+import { timeToMinutes } from '../utils/timeUtils.js';
+import { TOTAL_TABLES, MEAL_DURATION_MINUTES } from '../config/app.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,17 +29,27 @@ async function createReservation(data) {
     // File doesn't exist or is empty — start fresh
   }
 
-  // 3. Prevent duplicate CONFIRMED reservations (same customer, same date and time)
-  const duplicate = reservations.find(
-    r => r.phoneNumber === data.phoneNumber && r.date === data.date && r.time === data.time && r.status === "CONFIRMED"
-  );
+  // 3. Prevent duplicate CONFIRMED reservations (same customer, overlapping time window)
+  const newMinutes = timeToMinutes(data.time);
+  const newEndMinutes = newMinutes + MEAL_DURATION_MINUTES;
+  const duplicate = reservations.find(r => {
+    if (r.phoneNumber !== data.phoneNumber || r.date !== data.date || r.status !== "CONFIRMED") return false;
+    const existingMinutes = timeToMinutes(r.time);
+    const existingEndMinutes = existingMinutes + MEAL_DURATION_MINUTES;
+    return newMinutes < existingEndMinutes && existingMinutes < newEndMinutes;
+  });
   if (duplicate) {
-    throw new AppError('You already have a CONFIRMED reservation at this date and time', 429);
+    throw new AppError('You already have a CONFIRMED reservation within this time window', 429);
   }
 
-  // 4. Collect CONFIRMED table numbers for this time slot
+  // 4. Collect CONFIRMED table numbers whose time window overlaps with this request
   const reservedTableNumbers = reservations
-    .filter(r => r.date === data.date && r.time === data.time && r.status === "CONFIRMED")
+    .filter(r => {
+      if (r.date !== data.date || r.status !== "CONFIRMED") return false;
+      const existingMinutes = timeToMinutes(r.time);
+      const existingEndMinutes = existingMinutes + MEAL_DURATION_MINUTES;
+      return newMinutes < existingEndMinutes && existingMinutes < newEndMinutes;
+    })
     .map(r => r.tableNumber);
 
   // 5. Instant decision — find an available table or reject

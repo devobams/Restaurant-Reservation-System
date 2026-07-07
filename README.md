@@ -239,16 +239,20 @@ A few ideas that were discussed but sit outside this submission's scope:
 
 TechCrush C7 Group 10:
 
-- [@DevObams](https://github.com/DevObams)
-- [@Dev-Jayjaw](https://github.com/Dev-Jayjaw)
-- [@osiebejudith2022-eng](https://github.com/osiebejudith2022-eng)
-- [@ojekab4u](https://github.com/ojekab4u)
-- [@okuo-john](https://github.com/okuo-john)
-- [@mariamafolabi50-lab](https://github.com/mariamafolabi50-lab)
-- [@JohnPro300](https://github.com/JohnPro300)
-- [@davekoya14-star](https://github.com/davekoya14-star)
-- [@GloryUsen](https://github.com/GloryUsen)
-- [@kamolilukeman-hash](https://github.com/kamolilukeman-hash)
+## Contributors
+
+TechCrush C7 Group 10:
+
+- Michael Bamidele Ipadeola — [@DevObams](https://github.com/DevObams)
+- John Ughiovhe — [@Dev-Jayjaw](https://github.com/Dev-Jayjaw)
+- Judith Osiebe — [@osiebejudith2022-eng](https://github.com/osiebejudith2022-eng)
+- Kabir Olatunde Ojetunde — [@ojekab4u](https://github.com/ojekab4u)
+- Okuo John — [@okuo-john](https://github.com/okuo-john)
+- Mariam Afolabi — [@mariamafolabi50-lab](https://github.com/mariamafolabi50-lab)
+- John Alabi — [@JohnPro300](https://github.com/JohnPro300)
+- Kolade Ogunkoya — [@davekoya14-star](https://github.com/davekoya14-star)
+- Glory Usen — [@GloryUsen](https://github.com/GloryUsen)
+- Lukeman Dare Kamoli — [@kamolilukeman-hash](https://github.com/kamolilukeman-hash)
 
 For a detailed breakdown of individual contributions, see the repository's [Contributors graph](https://github.com/devobams/Restaurant-Reservation-System/graphs/contributors?from=4%2F4%2F2026).
 

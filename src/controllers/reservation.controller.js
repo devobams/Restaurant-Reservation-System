@@ -16,7 +16,22 @@ import { AppError } from '../middleware/error.middleware.js';
 
 export function getReservations(req, res) {}
 
-export function getReservationById(req, res) {}
+export async function getReservationById(req, res) {
+  try {
+    const { id } = req.params;
+
+    const reservation = await reservationService.getReservationById(id); 
+
+    res.status(200).json(reservation);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const message = error.message || "Internal server error";
+
+    res.status(statusCode).json({
+      error: message,
+    });
+  }
+}
 
 export function updateReservation(req, res) {}
 

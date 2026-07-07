@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error.middleware.js';
     }
 
     const result = await reservationService.createReservation(payload);
-    res.status(200).json(result);
+    res.status(201).json(result);
 }
 
 export async function getReservations(req, res) {
@@ -20,20 +20,9 @@ export async function getReservations(req, res) {
 }
 
 export async function getReservationById(req, res) {
-  try {
-    const { id } = req.params;
-
-    const reservation = await reservationService.getReservationById(id); 
-
-    res.status(200).json(reservation);
-  } catch (error) {
-    const statusCode = error.statusCode || 500;
-    const message = error.message || "Internal server error";
-
-    res.status(statusCode).json({
-      error: message,
-    });
-  }
+  const { id } = req.params;
+  const reservation = await reservationService.getReservationById(id);
+  res.status(200).json(reservation);
 }
 
 export async function updateReservation(req, res) {
@@ -42,17 +31,19 @@ export async function updateReservation(req, res) {
   const { id } = req.params;
   // 2. Get the data from the request body 
   const reservationData = req.body;
-  // validate the incoming data before updating the reservation
   const validate = validateReservation(reservationData);
+  // 3. Validate the incoming payload
   if (!validate.valid) {
-    const error = new AppError(validate.message);
-    error.statusCode = 400;
-    throw error;
+    throw new AppError(validate.message, 400);
   }
-  // 3. Call the service function to update the reservation
+  // 4. Call the service function to update the reservation
   const updatedReservation = await reservationService.updateReservation(id, reservationData);
-  // 4. Return the updated reservation in the response
+  // 5. Return the updated reservation in the response
   res.status(200).json(updatedReservation);
 }
 
-export function deleteReservation(req, res) {}
+export async function deleteReservation(req, res) {
+  const { id } = req.params;
+  const result = await reservationService.deleteReservation(id);
+  res.status(200).json(result);
+}

@@ -1,6 +1,6 @@
 import { generateId } from "../utils/generateId.js";
 export default class Reservation{
-    constructor({fullName, phoneNumber, date, time, numberOfGuest,
+    constructor({fullName, phoneNumber, date, time, numberOfGuest, tableNumber, status
     }){
         this.reservationId = generateId();
         this.fullName = fullName;
